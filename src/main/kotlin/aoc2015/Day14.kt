@@ -3,13 +3,16 @@ package aoc2015
 import java.io.File
 
 fun main(args: Array<String>) {
-    val list = mutableListOf<String>()
+    val reindeers = mutableListOf<Reindeer>()
     val inputStream = File("src/main/resources/day14.txt").inputStream()
-    inputStream.bufferedReader().lines().forEach { list.add(it)}
-    list.forEach {
-        val reindeer = Reindeer.fromString(it)
+    inputStream.bufferedReader().lines().forEach { reindeers.add(Reindeer.fromString(it))}
+    println("Part 1")
+    reindeers.forEach { reindeer ->
         println(reindeer.name + " flies " + reindeer.getDistanceFlown(2503))
     }
+
+    println("Part 2")
+    solvePart2(reindeers)
 }
 
 class Reindeer(val name: String, val speed: Int, val runTime: Int, val restTime: Int) {
@@ -41,3 +44,17 @@ class Reindeer(val name: String, val speed: Int, val runTime: Int, val restTime:
     }
 }
 
+
+fun solvePart2(reindeers: List<Reindeer>) {
+    val scores: MutableMap<String, Int> = reindeers.map { it.name to 0 }.toMap().toMutableMap()
+
+    for (i in 1..2503) {
+        val distances = reindeers.map { it.name to it.getDistanceFlown(i) }.toMap()
+        val  max = distances.maxBy { it.value }!!.value
+        reindeers.forEach {
+            if (distances[it.name] == max)
+                scores[it.name] = scores[it.name]!!.plus(1)
+        }
+    }
+    println("scores: " + scores.toList().sortedBy { (_, value) -> value })
+}
