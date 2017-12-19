@@ -36,9 +36,16 @@ internal class Day17KtTest {
 
     @Test
     fun solvesExample() {
-        //20, 15, 10, 5, and 5
+        // 20, 15, 10, 5, and 5
         val list = listOf(20, 15, 10, 5, 5)
         val combinations = findCombinations(list, 25)
         assertEquals(4, combinations.size)
+    }
+
+    @Test
+    fun findsCombinationsUsingMinimumNumberOfContainers() {
+        val list = listOf(20, 15, 10, 5, 5)
+        val combinations = solvePart2(list, 25)
+        assertEquals(3, combinations.size)
     }
 }
