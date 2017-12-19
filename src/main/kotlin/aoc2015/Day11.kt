@@ -1,41 +1,62 @@
 package aoc2015
 
-val letters = "abcdefghkmnpqrstuvwxyz"
-val next = letters.zip(letters.substring(1, letters.length) + "a").toMap()
-
 fun main(args: Array<String>) {
+    val startPassword = "vzbxkghb"
+    val next = getNextPassword(startPassword)
+    println(next)
+    val afterThat = getNextPassword(next)
+    println(afterThat)
+}
 
-    val pass = "azz"
-    var stillIncrementing = true
-    val sb = StringBuilder()
-    for (c in pass.reversed()) {
-        if(stillIncrementing) {
-            sb.append(next[c])
-            if (c != 'z') {
-                stillIncrementing = false
-            }
+val letters = "abcdefghijklmnopqrstuvwxyz"
+val next = letters.zip(letters.substring(1) + "a").toMap()
+
+fun getNextPassword(password: String): String {
+    var next = incrementPassword(password)
+    while (!isValid(next)) {
+        next = incrementPassword(next)
+    }
+    return next
+}
+
+fun isValid(password: String): Boolean {
+    return hasTwoPairs(password) && hasStraight(password) && !containsInvalidChar(password)
+}
+
+fun incrementPassword(s: String): String {
+    return if (s.isEmpty()) {
+        ""
+    } else {
+        val front = s.substring(0, s.length - 1)
+        val last = s.last()
+        if (last == 'z') {
+            incrementPassword(front) + next[last]
         } else {
-            sb.append(c)
+            front + next[last]
         }
     }
-    val newpass = sb.toString().reversed()
-    println(newpass)
-    println(incrementString("azz"))
 }
 
-fun incrementString(s: String): String {
-    return incrementReversed(s.reversed()).reversed()
+
+fun hasTwoPairs(s: String): Boolean {
+    return s.contains(Regex("(\\w)\\1+.*(\\w)\\2+"))
 }
 
-private fun incrementReversed(s: String): String {
-
-    if (s.isEmpty())
-        return ""
-
-    val head = s.first()
-    return if (head != 'z') {
-        next[head].toString() + s.substring(1)
-    } else {
-        next[head].toString() + incrementString(s.substring(1))
+fun hasStraight(s: String): Boolean {
+    return when {
+        s.length < 3 -> false
+        isStraight(s.substring(0, 3)) -> true
+        else -> hasStraight(s.substring(1))
     }
+}
+
+private fun isStraight(s: String): Boolean {
+    return when {
+        s.length < 3 -> false
+        else -> s[0].inc() == s[1] && s[1].inc() == s[2]
+    }
+}
+
+fun containsInvalidChar(s: String): Boolean {
+    return s.contains(Regex("[ilo]"))
 }
