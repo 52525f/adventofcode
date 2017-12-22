@@ -38,8 +38,8 @@ class Route {
     private val routeMap = mutableMapOf<String, MutableMap<String, Int>>()
 
     fun addRoute(from: String, to: String, distance: Int) {
-        routeMap.put(from, mutableMapOf(Pair(to, distance)))
-        routeMap.put(to, mutableMapOf(Pair(from, distance)))
+        routeMap.put(from, routeMap.getOrDefault(from, mutableMapOf()).apply { put(to, distance) })
+        routeMap.put(to, routeMap.getOrDefault(to, mutableMapOf()).apply { put(from, distance) })
     }
 
     fun getNeighbors(city: String): Map<String, Int> {
